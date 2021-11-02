@@ -138,7 +138,7 @@ server.on('error', (err) => {
 console.error('Server error:', err);
 });
 
-server.listen(2020, () => {
-  console.log('RPS started on 2020');
-});
+
+var port_number = server.listen(process.env.PORT || 3000);
+app.listen(port_number);
 
