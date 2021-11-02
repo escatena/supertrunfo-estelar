@@ -4,7 +4,7 @@ const socketio = require('socket.io');
 const Supertrunfo = require('./rps-game');
 const app = express();
 
-const clientPath = `/client`;
+const clientPath = `./client`;
 console.log(`Serving static from ${clientPath}`);
 
 app.use(express.static(clientPath));
