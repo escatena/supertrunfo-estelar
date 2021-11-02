@@ -10,7 +10,8 @@ console.log(`Serving static from ${clientPath}`);
 app.use(express.static(clientPath));
 
 const server = http.createServer(app);
-
+var port_number = server.listen(process.env.PORT || 3000);
+app.listen(port_number);
 
 // Variáveis globais//
 const io = socketio(server);
@@ -138,7 +139,5 @@ server.on('error', (err) => {
 console.error('Server error:', err);
 });
 
-var port_number = server.listen(process.env.PORT || 3000);
-app.listen(port_number);
 
 
