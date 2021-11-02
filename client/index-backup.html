@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Supertrunfo Estelar</title>
+    <link rel="stylesheet" href="styles/main.css">
+  </head>
+  <body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<div class="container">
+<div id="score" class="pontos"><br></div>
+
+<div class="carta">
+<img src="carta.png" >
+  <div id="7" class="constel"></div>
+  <div id="6" class="nome"></div>
+  <button id="0" class="massa"></button>
+  <button id="1" class="raio"></button>
+  <button id="2" class="temperatura"></button>
+  <button id="3" class="distancia"></button>
+  <button id="4" class="luminosidade"></button>
+  <button id="5" class="magnitude"></button>
+</div>
+
+<div class="capa">
+  <img src="capa.png" id="capa">
+  <input width="200px" class="jogador" type="text" placeholder="Digite o seu nome" id="nomeJogador">
+  <button class="jogar" right="80px" type="button" id="nome" text-align="center" >Jogar! </button>
+</div>
+
+<div class="salas">
+  <img src="sala.png" id="sala">
+
+  <div class="caixa" id="aviso">  
+  
+  <button class="butao1"  type="button" id="nope" >Não</button>
+  <button class="butao2"  type="button" id="yep" >Sim</button>
+  
+
+</div>
+  <div class="room" id="lista">
+   
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="src/client.js"></script>
+
+</div>
+</body>
+
+</html>
