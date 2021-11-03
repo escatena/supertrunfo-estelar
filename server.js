@@ -10,8 +10,7 @@ console.log(`Serving static from ${clientPath}`);
 app.use(express.static(clientPath));
 
 const server = http.createServer(app);
-var port_number = server.listen(process.env.PORT || 3000);
-app.listen(port_number);
+
 
 // Variáveis globais//
 const io = socketio(server);
@@ -54,7 +53,7 @@ jogadores.push(jogador);
 })
 
 //Cria a lista de jogadores que estão na sala ou jogando//
-sock.on("pegarNomes", (opa)=>{3
+sock.on("pegarNomes", (opa)=>{
   console.log(opa);
   io.emit("total",todosNomes)
 })
@@ -140,6 +139,5 @@ console.error('Server error:', err);
 });
 
 server.listen(process.env.PORT || 3000);
-
 
 
