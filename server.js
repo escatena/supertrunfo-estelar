@@ -54,7 +54,7 @@ jogadores.push(jogador);
 })
 
 //Cria a lista de jogadores que estão na sala ou jogando//
-sock.on("pegarNomes", (opa)=>{
+sock.on("pegarNomes", (opa)=>{3
   console.log(opa);
   io.emit("total",todosNomes)
 })
@@ -138,6 +138,8 @@ sock.on('disconnect', function() {
 server.on('error', (err) => {
 console.error('Server error:', err);
 });
+
+server.listen(process.env.PORT || 3000);
 
 
 
