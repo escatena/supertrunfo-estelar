@@ -102,9 +102,9 @@ p2.sock.emit('mostrarSala', nomes);
 
 //Informa que o jogador voltou do combate e coloca seu nome na lista da sala novamente
 sock.on('retorno',(b) => {
-  var p2 = jogadores.find(jogador => jogador.id === b);
+  var p = jogadores.find(jogador => jogador.id === b);
 
-nomes.push(p2.nome);
+nomes.push(p.nome);
 io.emit('salas', nomes);
 })
 
@@ -118,7 +118,13 @@ var pl2 = jogadores.find(jogador => jogador.id === p2);
 var sala = pl1.id+pl2.id;
 
 pl1.sock.emit('jogando', pl1.nome, pl2.nome, sala);
+pl1.sock.emit('msg',"É o seu turno!");
 pl2.sock.emit('jogando', pl2.nome, pl1.nome, sala);
+pl2.sock.emit('msg',"Aguardando o adversário!");
+
+pl1.sala = sala;
+pl2.sala = sala;
+
 console.log(p1,pl2.nome);
 
 //Remove o nome do jogador da lista de disponíveis na sala
@@ -144,7 +150,14 @@ function removeNome(arr, value) {
 sock.on('disconnect', function() {
   console.log('Got disconnect!');
   try {
-  var player = jogadores.find(jogador => jogador.id = sock.id);
+  var player = jogadores.find(jogador => jogador.id === sock.id);
+  var playerJogo = jogadores.filter(jogador => jogador.sala === player.sala)
+  playerJogo.forEach( (p) => {
+    if (p.id !== sock.id) {
+      io.to(p.id).emit("msg", "O adversário desconectou. Recarregue a página para voltar à sala de espera.")
+    }
+
+  })
 
   todosNomes = todosNomes.filter(ele => ele !== player.nome); 
   io.emit('total', todosNomes);
