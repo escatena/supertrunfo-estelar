@@ -64,10 +64,28 @@ var p1 = jogadores.find(jogador => jogador.nome === adversario);
 var p2 = jogadores.find(jogador => jogador.id === sock.id);
 
 console.log(p1,p2);
+try {
 removeNome(nomes,p1.nome);
-removeNome(nomes,p2.nome);
+}
+catch {
+  sock.emit("msg", "Houve um problema, recarregue a página")
+}
+finally {
 
-io.to(p1.id).emit("duelo", p2.nome);     
+try{
+  removeNome(nomes,p2.nome);
+}
+catch{
+  sock.emit("msg", "Houve um problema, recarregue a página")
+
+}
+
+}
+try {
+io.to(p1.id).emit("duelo", p2.nome);     }
+catch {
+  sock.emit("msg", "Houve um problema, recarregue a página")
+}
 })
 
 //Informa que o combate foi recusado
@@ -118,19 +136,23 @@ sock.emit("salas", nomes);
 })
 
 function removeNome(arr, value) { 
-  nomes = arr.filter(ele => ele != value); 
+  nomes = arr.filter(ele => ele !== value); 
   io.emit('salas',nomes);
   }
 // ================================= Desconexão ========================================//
 
 sock.on('disconnect', function() {
   console.log('Got disconnect!');
-  
-  var player = jogadores.find(jogador => jogador.sock = sock);
+  try {
+  var player = jogadores.find(jogador => jogador.id = sock.id);
 
-  todosNomes = todosNomes.filter(ele => ele != player.nome); 
+  todosNomes = todosNomes.filter(ele => ele !== player.nome); 
   io.emit('total', todosNomes);
-  io.emit('salas', todosNomes);
+  removeNome(nomes,player.nome);
+  }
+  catch {
+    sock.emit("msg", "Houve um problema, recarregue a página!")
+  }
 
 })
 })
