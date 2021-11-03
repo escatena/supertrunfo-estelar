@@ -49,6 +49,7 @@ function pegarNome() {
   sock.emit("nome", nome);
   document.getElementsByClassName("capa")[0].style.visibility = "hidden";
   }
+  if (nomes.length < 1) {alert("Aguardando adversários!")}
   
 }
 
@@ -254,6 +255,10 @@ sock.on('final', (p_meu, p_adv, resultado, room) =>{
 
         })
       }
+})
+
+sock.on("msg", msg =>{
+  alert(msg);
 })
 
 
