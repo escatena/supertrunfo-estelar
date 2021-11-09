@@ -1,12 +1,12 @@
 //Elementos HTML
 
-const opc = document.querySelector('.carta');
+const opc = document.getElementsByClassName('carta')[0];
 const parent = document.getElementById("lista");
 const avisoJogo = document.getElementById("aviso");
 const salas = document.getElementsByClassName("room")[0];
 const figura = document.getElementById("estrelas");
 const figuras = document.getElementsByClassName("estrelas")[0];
-
+const gameroom = document.getElementsByClassName("salas")[0]
 
 
 
@@ -62,12 +62,13 @@ sock.on("total",(todos) =>  {
 // ======================== Gerenciamento de Salas ============================//
 
 //Recebe os nomes dos jogadores disponíveis
-sock.on("salas", (sala) => {
-  nomes = sala;
+sock.on("salas", (salaNome) => {
+  document.getElementsByClassName('salas')[0].style.visibility = "visible"
+  nomes = salaNome;
   while (parent.firstChild) {
     parent.removeChild(parent.firstChild);
   }
-  sala.forEach((item)=> {
+  nomes.forEach((item)=> {
     if (item !== nome){
    var el = document.createElement("div");
    el.innerHTML=item;
@@ -77,23 +78,23 @@ sock.on("salas", (sala) => {
 })
 
 sock.on('mostrarSala', a => {
-       nomes=a;
-       salas.style.visibility = "visible";
-       while (parent.firstChild) {
-        parent.removeChild(parent.firstChild);
+      nomes=a;
+      salas.style.visibility = "visible";
+      while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
       }
-      a.forEach((item)=> {
+      nomes.forEach((item)=> {
         if (item !== nome){
        var el = document.createElement("div");
        el.innerHTML=item;
        el.id = item;
        if (nomes.indexOf(item) < 25) {    
         el.style.width= "50%";
-        el.style.float = "right";
+        el.style.float = "left";
     }
       else { 
       el.style.width= "50%";
-      el.style.float = "left";
+      el.style.float = "right";
  
     }
        parent.appendChild(el);}
@@ -102,22 +103,28 @@ sock.on('mostrarSala', a => {
 })
 
 //Habilita os jogadores a escolherem os adversários
-salas.addEventListener("click", (e) => {
+parent.addEventListener("click", (e) => {
   adversario = e.target.id;
- sock.emit("match", adversario);
+  if (nomes.indexOf(adversario) > -1) {
+ sock.emit("match", adversario, nome);
  salas.style.visibility = "hidden";
-
+  }
 })
 
+
+// =========================================== Pedido de jogo ====================================================
 // Recebe o pedido de duelo
-sock.on('duelo', (p2) => {
-  _jogar(p2);
+sock.on('duelo', (p) => {
+  _jogar(p);
   
 })
 
-function _jogar(p2) {
+function _jogar(p) {
+  gameroom.style.visibility = "visible"
   salas.style.visibility = "hidden";
-  adv = p2;
+  adv = p;
+  avisoJogo.style.visibility="visible";
+
   while (aviso.firstChild) {
     aviso.removeChild(aviso.firstChild);
     }
@@ -126,7 +133,6 @@ function _jogar(p2) {
       el.id = 'desafio'
        el.innerHTML= "O jogador "+adv+" está te desafiando para uma partida! <br> Você aceita?";
        caixa.appendChild(el);
-       avisoJogo.style.visibility="visible";
        var yep = document.createElement('button');
        yep.className = "butao2";  
           yep.innerHTML = "Sim";
@@ -142,22 +148,26 @@ function _jogar(p2) {
        yep.addEventListener('click', _yep);
 }
 
+
 //Recusa o duelo
+
 function _nope() {
     avisoJogo.style.visibility="hidden";
     salas.style.visibility = "visible";
+    sala = [];
 
     var element = document.getElementById("desafio");
     element.parentNode.removeChild(element);
-    sock.emit('recusa', adv, sock.id);  
+    sock.emit('recusa', adv, nome);  
 }
 
 //Aceita o duelo
 function _yep() {
-  sock.emit('inicio', adv, sock.id)
+  sock.emit('inicio', adv, nome)
   while (aviso.firstChild) {
     aviso.removeChild(aviso.firstChild);
     }
+  
 }
 
 
@@ -165,8 +175,13 @@ function _yep() {
 
 //Esconde a lista de adversários e define os jogadores
 sock.on("jogando", (p1,p2, room) => {
+  salas.style.visibility = "hidden";
   document.getElementsByClassName("salas")[0].style.visibility = "hidden";
+  document.getElementById("sala").style.visibility = "hidden";
   avisoJogo.style.visibility="hidden";
+  figuras.style.visibility = "visible";
+  gameroom.style.visibility = "hidden";
+
   player = [p1,p2];
   sala = room;
 
@@ -223,11 +238,14 @@ document.getElementsByClassName('carta')[0].addEventListener('click', e => {
 
 //Resultado final
 sock.on('final', (p_meu, p_adv, resultado, room) =>{
+  setTimeout(final, 3000,p_meu, p_adv, resultado, room)
+})
+
+function final(p_meu, p_adv, resultado, room) {
   if (room === sala) {
     sala = [];
   turno = 0;
   figuras.style.visibility = "hidden";
-  document.getElementsByClassName("salas")[0].style.visibility = "visible";
   var caixa = document.getElementById("aviso");
   var el = document.createElement("div");
        while (aviso.firstChild) {
@@ -241,27 +259,44 @@ sock.on('final', (p_meu, p_adv, resultado, room) =>{
     var restart = document.createElement('button');
         restart.style.fontSize = "1.3rem"
         restart.innerHTML = "Voltar para sala";
+        player = [];
         caixa.appendChild(restart);
         restart.addEventListener('click', (e) => {
          
           avisoJogo.style.visibility="hidden";
           salas.style.visibility = "visible";
-
-          sock.emit('retorno',sock.id);  
+          document.getElementById("sala").style.visibility = "visible";
           document.getElementById("score").innerHTML='';
-          for (j=0 ; j < 8 ; j++) {
+          for (j = 0 ; j < 8 ; j++) {
           document.getElementById(j).innerHTML='';
           }
+          sock.emit('retorno',nome);  
+
+          
 
         })
       }
-})
+}
+// ===================================== Desconexão ===========================================
+
+//Adversário se desconecta
+sock.on("volta", a =>{
+  turno = 0;
+
+  document.getElementsByClassName("salas")[0].style.visibility = "visible";
+  avisoJogo.style.visibility="hidden";
+  figuras.style.visibility = "hidden";
+  document.getElementById("sala").style.visibility = "visible";
+  salas.style.visibility = "visible";
+  gameroom.style.visibility = "visible";
+  sala = [];
+  player = [];
+  sock.emit('retorno', nome);  
+ })
 
 sock.on("msg", msg =>{
   alert(msg);
 })
-
-
 
 
 
