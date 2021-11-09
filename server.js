@@ -85,6 +85,7 @@ p2.sock.emit('mostrarSala', nomes);
 sock.on('retorno',(b) => {
 nomes.push(b);
 io.emit('mostarSala', nomes);
+sock.emit('mostrarSala', nomes);
 })
 
 // ===================================Início do jogo =================================//
