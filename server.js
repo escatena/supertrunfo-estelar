@@ -143,7 +143,13 @@ sock.on('disconnect', function() {
      io.to(p.id).emit('volta', "opa")
       
     }
-   
+    jogadores = jogadores.filter(ele => ele !== player); 
+
+    player.nome = [];
+    player.sala = [];
+    player.id = [];
+    player.sock = [];
+
 
   })
 
@@ -153,13 +159,6 @@ sock.on('disconnect', function() {
   removeNome(nomes,player.nome);
   console.log("Lista de nomes disponíveis: "+nomes);
   console.log("Lista de nomes em jogo: "+todosNomes);
-   jogadores = jogadores.filter(ele => ele !== player); 
-
-    player.nome = [];
-    player.sala = [];
-    player.id = [];
-    player.sock = [];
-
   }
   catch {
     sock.emit("msg", "Houve um problema, recarregue a página!")
