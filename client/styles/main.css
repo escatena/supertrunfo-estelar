@@ -194,8 +194,7 @@ button.turn:hover {
     color: "black"
    }  
 
-.caixa {
-  z-index: 6;
+.caixa {  z-index: 6;
   width: 400px;
   height: 300px;
   position: absolute;
@@ -208,8 +207,10 @@ button.turn:hover {
   font-stretch: extra-condensed;
   opacity: 1;
   border-radius: 36px;
-  border-width: 2px;
-  border-color: black;
+  outline-style: inset;
+  border: 2px;
+  border-width: 6px;
+  outline-color: rgb(24, 52, 121);
   background-color: rgb(255, 255, 255);
   cursor: default;
   color: "black"
@@ -297,9 +298,20 @@ button.turn:hover {
   height: auto;
   opacity: 1;
   background-color: transparent;
-
-
+  
  }
+  .HR {
+    z-index: 0;
+    position: absolute;
+    padding: 0px;
+    top: -12px;
+    margin-left: -10px;
+    width: 445px;
+    margin-top: 9px;
+    height: 315px;
+    opacity: 1;
+    background-color: transparent;
+}
 
  .nome { 
   z-index: 6;
