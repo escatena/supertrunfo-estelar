@@ -1,5 +1,6 @@
 //Elementos HTML
 
+
 const opc = document.getElementsByClassName('carta')[0];
 const parent = document.getElementById("lista");
 const avisoJogo = document.getElementById("aviso");
@@ -25,6 +26,96 @@ var nomes = [];
 var todosNomes = [];
 var player =[];
 var sala = [];
+
+
+//================================================Define o Diagrama HR====================================================
+
+var lumin = [1];
+var temp=[5780];
+var estrela = ["Sol"];
+var raio=[10];
+var cores = ['rgb(255,234.05,218.02)'];
+
+//=============================================Cores ==========================================
+function setColor(T) {
+ var Ts;
+ var r;
+ var b;
+ var g;
+ var cor;
+ Ts = T/5780;
+      
+    if(Ts > 1.1){
+    r = 28.0 + 232.62*Math.pow(Ts, -0.259);
+    }
+    else r = 255.0;   
+    
+    if(Ts > 1.1){
+    g = 1.4821*Ts*Ts*Ts*Ts - 23.356*Ts*Ts*Ts + 130.29*Ts*Ts - 311.12*Ts + 451.64;
+    }  
+    else g = 211.86*Ts + 22.19;
+    
+    if(Ts < 1.1){
+    b = -1549.6*Ts*Ts*Ts + 3943.3*Ts*Ts - 2986.4*Ts + 810.72;
+    }
+    else b = 255.0;
+          
+    cor ="rgb("+ Math.min(parseInt(r), 255)+ ", "+ Math.min(parseInt(g), 255)+", "+ Math.min(parseInt(b), 255)+")";    
+    cores.push(cor);
+     }
+  //===========================  //============================================
+    
+function diagramaHR(temp,lumin,estrela,raio,cores) {
+     var trace = {x:temp,  y: lumin, mode:"markers+text", type: "scatter",
+     marker: {
+      color:cores,
+      size:raio,
+  },
+     text:estrela,
+     font: {
+      family: 'calibri',
+      size: 15,
+      color: '#7f7f7f'
+},
+    textposition: 'bottom center',
+     
+};
+     var data = [trace];   
+     var layout = {width:525,
+      height:415,
+      margin: {b:'0px',l:'0px', r:'0px', t:'0px'},
+
+
+      yaxis: {type: 'log',
+      range: [-1, 7],    
+        title: {standoff:0,
+          text: 'Luminosidade (L<sub>Sol</sub>)',
+          font: {
+            family: 'calibri',
+            size: 15,
+            color: '#7f7f7f'
+      }
+      
+    }
+  },
+  xaxis: {type: "linear", 
+  xside: "bottom",
+  range: [35000, 500],    
+  title: {standoff:0,
+          text: 'Temperatura (K)',
+          font: {
+            family: 'calibri',
+            size: 15,
+            color: '#7f7f7f'
+      }
+      
+    }
+  }
+ }
+
+Plotly.newPlot('myDiv', data, layout, {staticPlot: true});
+}
+diagramaHR(temp,lumin,estrela,raio,cores);
 
 // ========================== Início ==========================================//
 
@@ -184,7 +275,6 @@ sock.on("jogando", (p1,p2, room) => {
 
   player = [p1,p2];
   sala = room;
-
 })
 
 //Recebe as cartas da rodada
@@ -208,9 +298,9 @@ function _rodada(rodadaTurno) {
     itens.disabled=false;
     }
     figuras.style.visibility = "visible";
-    const imagem = rodadaTurno[6];
-        figura.src = imagem+".png";
-        figura.style.visibility = "visible"
+    //const imagem = rodadaTurno[6];
+     //   figura.src = imagem+".png";
+      //  figura.style.visibility = "visible"
   
 }
 
@@ -218,11 +308,25 @@ function _rodada(rodadaTurno) {
 sock.on("resultado", (p, o , s1, s2, option,cor1,cor2, turn, room)=>{
   if (sala === room) {
       turno = turn;
+
+
       var col=document.getElementById(option);
       col.style.fontstretch = "extra-condensed";
       col.innerHTML= `<font color=${cor2}> ${o[option]}</font>/<font color=${cor1}>${p[option]}</font>`;
-      document.getElementById("score").innerHTML= `${player[0]}: ${s1} / ${player[1]}: ${s2}`;
+      document.getElementById("score").innerHTML= `<font color=black > ${player[0]}: ${s1} / ${player[1]}: ${s2}</font>`;
       document.getElementById(6).innerHTML= `<font color=${cor2}> ${o[6]}</font>/<font color=${cor1}>${p[6]}</font>`;
+
+
+     //Exibe o Diagrama HR atualizado
+
+     lumin.push(o[4],p[4]);
+     temp.push(o[2],p[2]);
+     estrela = estrela.fill("");
+     estrela.push(o[6],p[6]);
+     raio.push(10+8*Math.log(o[1]),10+8*Math.log(p[1]));
+     setColor(o[2]);
+     setColor(p[2]);
+     diagramaHR(temp,lumin,estrela,raio,cores);
   }
 })
   
@@ -243,7 +347,7 @@ sock.on('final', (p_meu, p_adv, resultado, room) =>{
 
 function final(p_meu, p_adv, resultado, room) {
   if (room === sala) {
-    sala = [];
+  sala = [];
   turno = 0;
   figuras.style.visibility = "hidden";
   var caixa = document.getElementById("aviso");
@@ -270,12 +374,29 @@ function final(p_meu, p_adv, resultado, room) {
           for (j = 0 ; j < 8 ; j++) {
           document.getElementById(j).innerHTML='';
           }
-          sock.emit('retorno',nome);  
-
-          
-
+          sock.emit('retorno',nome); 
         })
+
+        //Reseta as variáveis //
+
+        lumin = [1];
+        temp = [5780];
+        estrela = ["Sol"];
+        raio = [10];
+        cores = ['rgb(255,234.05,218.02)'];
+        diagramaHR(temp,lumin,estrela,raio,cores);
+        player = [];
+
+
+        var j = 0;
+        for (j= 0; j < 8; j++) {
+        var dados = '';
+        var itens = document.getElementById(j);
+        itens.style.color="white";
+        itens.innerHTML=dados;
+  
       }
+}
 }
 // ===================================== Desconexão ===========================================
 
