@@ -5,14 +5,16 @@
     <link rel="stylesheet" href="styles/main.css">
   </head>
   <body>
-    <a href="http://galileu.blumenau.ufsc.br">Acesse o site do GALILEU - UFSC</a>
+    <a href="https://galileu.paginas.ufsc.br/supertrunfo-estelar/">Acesse as instruções no site do GALILEU - UFSC</a>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <div class="container">
   <div class = "estrelas">
-    <img  id = "estrelas" src="Sol.png" >
+    <div class="HR" id="myDiv" height="10px" width="auto" >      <!-- Plotly chart will be drawn inside this DIV -->  </div>
+  <img  id = "estrelas" src="Sol.png" > 
   </div>
+  
 <div id="score" class="pontos"><br></div>
 <div class="carta">
 <img src="carta.png" >
@@ -45,9 +47,12 @@
 </div>
 
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 
 <script src="/socket.io/socket.io.js"></script>
 <script type="module" src="src/client.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 </div>
 
